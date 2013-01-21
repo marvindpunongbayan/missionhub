@@ -77,6 +77,11 @@ class Organization < ActiveRecord::Base
     end
   end
 
+  def use_smseco?
+    allowed_ids = APP_CONFIG['smseco_gateway_orgs'] || []
+    return allowed_ids.include?(id)
+  end
+
   def pending_transfer
     sent.includes(:sent_person).where('sent_people.id IS NULL')
   end
