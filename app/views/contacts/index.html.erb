@@ -1,7 +1,12 @@
 <% provide :sidebar do %>
-  <%= render 'contacts/leaders' %>
+  <div id="sidebar_div">
+    <div id="sidebar_loader">
+      <%= image_tag 'loader.gif'%>
+      <br/>
+      Loading Sidebar
+    </div>
+  </div>
 <% end %>
-
 <%= render 'shared/bulk_vcard_dialog' %>
 <%= render 'shared/bulk_send_msg' %>
 
