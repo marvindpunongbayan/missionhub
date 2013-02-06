@@ -17,5 +17,6 @@ $(document).ready(function(){
       return $.fn.assignTo(leader);
     }
   }, $(this).hasClass("dnc") ? (li = $(this), li.effect('highlight', {}, 'slow'), $.fn.moveToDnc(ui.draggable)) : void 0);
-
+  
+  $('.tipitright ').qtip()
 })
