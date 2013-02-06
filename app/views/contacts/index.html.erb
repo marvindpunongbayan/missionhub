@@ -14,13 +14,13 @@
   <h1>
     <%= t('.all_responses') %>
     <%= "#{'-' if @header.present?} #{@header}" %>
-    <div id='global_loader'>
+    <div id='global_loader' style='display:none;'>
       <%= image_tag 'loader.gif'%>
     </div>
   </h1>
 </div>
 
-<%= render 'contacts/pagination' %>
+<%= render('contacts/pagination') unless @people.count.count < 25 %>
 
 <div class="pagemenu">
   <%= render partial: 'menu' %>
@@ -70,7 +70,7 @@
     </tbody>
   </table>
 
-	<%= render 'contacts/pagination' %>
+  <%= render 'contacts/pagination' %>
   <% if @people.blank? %>
     <div class="contentpad no_contacts">
       <%= t('contacts.index.no_contacts') %>

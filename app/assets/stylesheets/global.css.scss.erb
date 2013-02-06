@@ -404,9 +404,14 @@ ul.leftmenu {
 }
 
 #main {
+  border-left: 1px solid #0379ae;
+  margin-left: 0px;
   margin-left: 205px;
 }
 
+#rest {
+ background: url('<%= asset_path('linebg.png') %>') repeat-y 0% 0%;
+}
 
 .pad {
   padding: 0px;
@@ -417,7 +422,6 @@ ul.leftmenu {
 }
 
 .carea {
-  border-left: 1px solid #0379ae;
   padding-bottom: 30px;
 }
 
@@ -2090,7 +2094,6 @@ div.field_with_errors div.ui-effects-wrapper {
 
 /* PAGINATION  */
 div.pagination {
-  margin: 10px 0 10px 0;
   text-align: center;
 		display:inline-block;
   span.page {
@@ -2117,15 +2120,13 @@ div.pagination {
   font-weight: bold;
 }
 .paginate_container {
+  padding: 5px;
 	text-align: center;
 	.paginate_details{
 		display:inline-block;
 		font-weight:bold;
 		padding: 0px;
     margin: 0px;
-    .pagination {
-      margin: 5px auto;
-    }
 	}
 }
 
@@ -2859,7 +2860,6 @@ ul.divider {
 	background: #c7dff0;
 	border: 1px solid #0379ae;
 }
-
 
 .bold_link {
   font-weight: bold;
