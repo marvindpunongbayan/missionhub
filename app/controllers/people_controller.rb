@@ -322,7 +322,7 @@ class PeopleController < ApplicationController
         else
           # Otherwise send it as a text
           gateway = current_organization.use_smseco? ? 'smseco' : 'twilio'
-          @sent_sms = SentSms.create!(message: params[:body], recipient: person.phone_number, sent_via: gateway)
+          @sent_sms = SentSms.create!(message: params[:body], recipient: person.phone_number, sent_via: current_organization.sms_gateway)
           # + ' Txt HELP for help STOP to quit'
           @sent_sms.queue_sms
         end

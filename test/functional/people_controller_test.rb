@@ -84,7 +84,6 @@ class PeopleControllerTest < ActionController::TestCase
       end
 
       should "send bulk SMS via twilio" do
-        APP_CONFIG['smseco_gateway_orgs'] = []
         assert_difference "SentSms.count", +2 do
           xhr :post, :bulk_sms, { :to => "#{@person1.id},#{@person2.id}", :body => "test sms body" }
         end
@@ -92,7 +91,8 @@ class PeopleControllerTest < ActionController::TestCase
       end
 
       should "send bulk SMS via smseco" do
-        APP_CONFIG['smseco_gateway_orgs'] = [@org.id]
+        @org.settings[:sms_gateway] = 'smseco'
+        @org.save
         assert_difference "SentSms.count", +2 do
           xhr :post, :bulk_sms, { :to => "#{@person1.id},#{@person2.id}", :body => "test sms body" }
         end
