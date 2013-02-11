@@ -144,8 +144,8 @@ class Import < ActiveRecord::Base
 	    	
 	    	#create unique phone number but not a primary
 	    	if question.attribute_name == "phone_number"
-	    		numbers = person.phone_numbers
-	    		if numbers.count > 1
+	    		numbers = person.phone_numbers	    		
+	    		if numbers.find_by_primary(true).present?
     				person.phone_numbers.create(number: answer, primary: false) unless numbers.where("number = ?", answer).present?
 	    		end
 	    	end
