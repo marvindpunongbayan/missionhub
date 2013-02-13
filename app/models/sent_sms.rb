@@ -7,7 +7,7 @@ class SentSms < ActiveRecord::Base
   serialize :separator
   default_value_for :sent_via, 'twilio'
 
-  #after_create :queue_sms
+  # after_create :queue_sms
 
   def self.smart_split(text, separator=nil, char_limit=160)
     return [text] if text.length <= char_limit
@@ -30,7 +30,6 @@ class SentSms < ActiveRecord::Base
         new_text += next_chunk
         previous_separator = match[0]
         remaining_text = text_parts[1..-1].join(' ')
-        # remaining_text = text.sub(new_text, '')
       end
     end
     unless too_big
@@ -94,43 +93,17 @@ class SentSms < ActiveRecord::Base
 
   def send_sms
     case sent_via
-    #when 'moonshado'
-    #self.moonshado_claimcheck = SMS.deliver(recipient, message).first #
     when 'smseco'
       to_smseco
-    else 'twilio'
-      # Figure out which number to send from
+    else
       if received_sms
         from = received_sms.shortcode
       else
-        # If the recipient is in the US, use the shortcode, otherwise use the long number
-        # from = recipient.first == '1' ? SmsKeyword::SHORT : SmsKeyword::LONG
-        #from = SmsKeyword::SHORT
         from = SmsKeyword::LONG
       end
-      #if message.length > 160
-        #split_message = SentSms.smart_split(message, separator)
-        #next_message = SentSms.new(attributes.merge(:message => split_message[1]))
-        #self.message = split_message[0]
-      #end
       SentSms.smart_split(message, separator).each do |message|
         Twilio::SMS.create(:to => recipient, :body => message.strip, :from => from)
       end
-      #self.twilio_sid = sms.sid
-      #self.twilio_uri = sms.uri
-      #else
-      #raise "Not sure how to send this sms: sent_via = #{sent_via}"
-      #end
-      #save
-      #if next_message
-        #sleep(2)
-        #next_message.save
-      #end
-      # Log count sent through this carrier (just for fun)
-      # if received_sms && received_sms.carrier_name.present?
-      #   carrier = SmsCarrier.find_or_create_by_moonshado_name(received_sms.carrier_name)
-      #   carrier.increment!(:sent_sms)
-      # end
     end
   end
 

@@ -77,7 +77,6 @@ class Organization < ActiveRecord::Base
     end
   end
 
-
   def sms_gateway
     settings[:sms_gateway] || 'twilio'
   end
