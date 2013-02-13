@@ -37,6 +37,80 @@ class EmailAddress < ActiveRecord::Base
     EmailAddress.where(email: email).blank?
   end
 
+  def self.clean_emails
+    count_deleted, count_updated = 0, 0;
+    email_deleted, email_updated = {}, {};
+    rejected_emails, duplicate_emails = {}, {};
+    accepted_emails = [];
+    dirty_emails = EmailAddress.where("email LIKE '% %'");
+    dirty_emails.reverse.each do |dirty_email|
+      valid_email = nil
+
+      # Store raw email value
+      raw_email_value = dirty_email.email
+      # Fix unproperly written emails for "@ " and " @"
+      dirty_email_value = raw_email_value.strip.gsub(/(\@\s)|(\ \@)/,'@')
+      # Fix unproperly written emails for " .com"
+      dirty_email_value = dirty_email_value.strip.gsub(' .com','.com')
+      # Split email by spaces
+      splitted_email = dirty_email_value.split(' ')
+
+      splitted_email.each do |email|
+        # Remove unnecessary characters
+        clean_email = email.gsub(/\;|\<|\>|\,/,'').strip
+        # Validate email address
+        if valid_email.nil? && EmailAddress.new(email: clean_email).valid?
+          valid_email = clean_email
+          accepted_emails << clean_email
+        elsif exist = EmailAddress.find_by_email(clean_email)
+          # Check existing people
+          # if exist.person_id != dirty_email.person_id
+            duplicate_emails[clean_email] = "#{exist.person_id} - #{dirty_email.person_id}"
+          # end
+        else
+          if valid_email.present?
+            rejected_emails[clean_email] = 'ignored'
+          else
+            rejected_emails[clean_email] = 'invalid format'
+          end
+        end
+      end
+
+      if valid_email
+        # Update email address
+        dirty_email.email = valid_email;
+        dirty_email.save!;
+        email_updated["#{raw_email_value}"] = valid_email;
+        count_updated += 1;
+      else
+        # Delete emaill address
+        dirty_email.destroy;
+        email_deleted["#{raw_email_value}"] = dirty_email_value;
+        count_deleted += 1;
+      end
+    end
+
+    # Print some report
+    puts "---"
+    puts "Email Address Cleaning Complete!"
+    puts "---"
+    puts "#{count_updated} email#{'s' if count_updated > 1} updated!"
+    puts "#{email_updated.inspect}"
+    puts "---"
+    puts "#{count_deleted} email#{'s' if count_deleted > 1} deleted!"
+    puts "#{email_deleted.inspect}"
+    puts "---"
+    puts "Accepted Emails"
+    puts "#{accepted_emails.inspect}"
+    puts "---"
+    puts "Rejected Emails"
+    puts "#{rejected_emails.inspect}"
+    puts "---"
+    puts "Duplicate Emails"
+    puts "#{duplicate_emails.inspect}"
+    puts "---"
+  end
+
   protected
 
   def set_primary
