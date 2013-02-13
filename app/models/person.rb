@@ -188,7 +188,7 @@ class Person < ActiveRecord::Base
   def latest_answer_sheet(organization)
   	answer_sheets.includes(:survey).where("surveys.organization_id = ?",organization.id).order("answer_sheets.updated_at DESC").first
   end
-  
+
   scope :get_archived, lambda { |org_id| {
     :conditions => "organizational_roles.archive_date IS NOT NULL",
     :group => "people.id",
@@ -576,6 +576,10 @@ class Person < ActiveRecord::Base
   def email
     @email = primary_email_address.try(:email)
     @email.to_s
+  end
+
+  def has_valid_email?
+    primary_email_address.present? && primary_email_address.valid?
   end
 
   def email=(val)
