@@ -194,7 +194,7 @@ class Person < ActiveRecord::Base
   def latest_answer_sheet(organization)
   	answer_sheets.includes(:survey).where("surveys.organization_id = ?",organization.id).order("answer_sheets.updated_at DESC").first
   end
-  
+
   scope :get_archived, lambda { |org_id| {
     :conditions => "organizational_roles.archive_date IS NOT NULL",
     :group => "people.id",
@@ -1039,6 +1039,11 @@ class Person < ActiveRecord::Base
 
   def is_sent?
     sent_person != nil
+  end
+
+  def answer_sheet_for_survey(survey_id)
+    answer_sheets.where(survey_id: survey_id).first ||
+    answer_sheets.create!(survey_id: survey_id)
   end
 
   def self.vcard(ids)
